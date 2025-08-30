@@ -97,7 +97,7 @@ p { font-size: 1.2em; }
 <script>
 const btn = document.getElementById('celebrateBtn');
 const card = document.getElementById('card');
-
+const audio = new Audio("31857.mp3")
 function random(min,max){ return Math.random()*(max-min)+min; }
 
 function createParticles(x, y, count, secondary=false) {
@@ -144,6 +144,7 @@ let fireworkInterval;
 btn.addEventListener('click', ()=>{
   // fade-in background gelap Jalur Gemilang
   card.style.opacity = 0;
+  audio.play()
   setTimeout(()=>{
     
     card.style.opacity = 1;
