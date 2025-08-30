@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kad Merdeka Interaktif</title>
+<style>
+body {
+  margin: 0;
+  background: #000;
+  overflow: hidden;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+}
+
+.card {
+  position: relative;
+  z-index: 10;
+  background: rgba(0,0,0,0.7); /* semi gelap */
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 600px;
+  background-size: cover;
+  background-position: center;
+  opacity: 1;
+  transition: background 2s ease, opacity 2s ease;
+}
+
+h1 { color: #ffd700; }
+p { font-size: 1.2em; }
+
+.button {
+  background-color: #ff0000;
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.firework {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  animation: shoot 1.2s linear forwards;
+  z-index: 5;
+}
+
+.particle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: explode 1.2s forwards;
+  z-index: 5;
+  box-shadow: 0 0 15px white;
+}
+
+@keyframes shoot {
+  0% { transform: translateY(0); opacity:1; }
+  70% { transform: translateY(-500px); opacity:1; }
+  100% { transform: translateY(-500px); opacity:0; }
+}
+
+@keyframes explode {
+  0% { opacity:1; transform: translate(0,0) scale(1); }
+  100% { opacity:0; transform: translate(var(--dx), var(--dy)) scale(0.7); }
+}
+
+@media (max-width: 600px) {
+  .card { padding: 20px; }
+  h1 { font-size: 1.5em; }
+  p { font-size: 1em; }
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <h1>Selamat Hari Kemerdekaan Malaysia ke-68</h1>
+  <p>Kemerdekaan sebenar ialah kebebasan hati dan iman, bersyukur kepada Allah atas nikmat tanah air yang bebas dan damai untuk islam.</p>
+  <button class="button" id="celebrateBtn">Tekan</button>
+</div>
+
+<script>
+const btn = document.getElementById('celebrateBtn');
+const card = document.getElementById('card');
+
+function random(min,max){ return Math.random()*(max-min)+min; }
+
+function createParticles(x, y, count, secondary=false) {
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    const angle = random(0, 2*Math.PI);
+    const distance = secondary ? random(30,80) : random(100,250);
+    p.style.setProperty('--dx', distance*Math.cos(angle)+'px');
+    p.style.setProperty('--dy', distance*Math.sin(angle)+'px');
+    const hue = random(0,360);
+    p.style.background = `hsl(${hue},100%,60%)`;
+    p.style.boxShadow = `0 0 20px hsl(${hue},100%,60%)`;
+    document.body.appendChild(p);
+
+    if(!secondary){
+      setTimeout(()=>{
+        createParticles(x + distance*Math.cos(angle), y + distance*Math.sin(angle), 7, true);
+      }, 500);
+    }
+
+    setTimeout(()=> p.remove(),1200);
+  }
+}
+
+function createFirework() {
+  const fw = document.createElement('div');
+  fw.classList.add('firework');
+  fw.style.left = random(50, window.innerWidth-50) + 'px';
+  document.body.appendChild(fw);
+
+  setTimeout(() => {
+    const x = fw.offsetLeft;
+    const y = fw.offsetTop - 500;
+
+    createParticles(x, y, 30);
+    fw.remove();
+  }, 900);
+}
+
+btn.addEventListener('click', ()=>{
+  // Tambah background Jalur Gemilang dengan overlay gelap & fade-in
+  card.style.opacity = 0; // fade out sekejap
+  setTimeout(()=>{
+    card.style.backgroundImage = "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://upload.wikimedia.org/wikipedia/commons/6/66/Flag_of_Malaysia.svg')";
+    card.style.opacity = 1; // fade in
+  }, 300);
+
+  // Fireworks berulang tanpa henti
+  setInterval(createFirework, 400);
+});
+</script>
+</body>
+</html>
