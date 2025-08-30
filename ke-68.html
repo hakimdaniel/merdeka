@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kad Merdeka Interaktif</title>
+<title>Kad Merdeka Interaktif Optimum</title>
 <style>
 body {
   margin: 0;
@@ -21,7 +21,7 @@ body {
 .card {
   position: relative;
   z-index: 10;
-  background: rgba(0,0,0,0.7); /* semi gelap */
+  background: rgba(0,0,0,0.7);
   padding: 30px;
   border-radius: 20px;
   max-width: 600px;
@@ -47,34 +47,36 @@ p { font-size: 1.2em; }
 .firework {
   position: absolute;
   bottom: 0;
-  width: 6px;
-  height: 12px;
+  width: 5px;
+  height: 10px;
   border-radius: 50%;
   background: white;
-  animation: shoot 1.2s linear forwards;
+  animation: shoot 1s linear forwards;
   z-index: 5;
+  will-change: transform, opacity;
 }
 
 .particle {
   position: absolute;
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   opacity: 0;
-  animation: explode 1.2s forwards;
+  animation: explode 0.9s forwards;
   z-index: 5;
-  box-shadow: 0 0 15px white;
+  box-shadow: 0 0 10px white;
+  will-change: transform, opacity;
 }
 
 @keyframes shoot {
   0% { transform: translateY(0); opacity:1; }
-  70% { transform: translateY(-500px); opacity:1; }
-  100% { transform: translateY(-500px); opacity:0; }
+  70% { transform: translateY(-350px); opacity:1; }
+  100% { transform: translateY(-350px); opacity:0; }
 }
 
 @keyframes explode {
   0% { opacity:1; transform: translate(0,0) scale(1); }
-  100% { opacity:0; transform: translate(var(--dx), var(--dy)) scale(0.7); }
+  100% { opacity:0; transform: translate(var(--dx), var(--dy)) scale(0.6); }
 }
 
 @media (max-width: 600px) {
@@ -88,7 +90,7 @@ p { font-size: 1.2em; }
 
 <div class="card" id="card">
   <h1>Selamat Hari Kemerdekaan Malaysia ke-68</h1>
-  <p>Kemerdekaan sebenar ialah kebebasan hati dan iman, bersyukur kepada Allah atas nikmat tanah air yang bebas dan damai untuk islam.</p>
+  <p>Kemerdekaan sebenar ialah kebebasan hati dan iman, bersyukur kepada Allah atas nikmat tanah air yang bebas dan damai untuk Islam.</p>
   <button class="button" id="celebrateBtn">Tekan</button>
 </div>
 
@@ -105,21 +107,21 @@ function createParticles(x, y, count, secondary=false) {
     p.style.left = x + 'px';
     p.style.top = y + 'px';
     const angle = random(0, 2*Math.PI);
-    const distance = secondary ? random(30,80) : random(100,250);
+    const distance = secondary ? random(20,50) : random(80,150); // kurang jarak
     p.style.setProperty('--dx', distance*Math.cos(angle)+'px');
     p.style.setProperty('--dy', distance*Math.sin(angle)+'px');
     const hue = random(0,360);
     p.style.background = `hsl(${hue},100%,60%)`;
-    p.style.boxShadow = `0 0 20px hsl(${hue},100%,60%)`;
+    p.style.boxShadow = `0 0 15px hsl(${hue},100%,60%)`;
     document.body.appendChild(p);
 
     if(!secondary){
       setTimeout(()=>{
-        createParticles(x + distance*Math.cos(angle), y + distance*Math.sin(angle), 7, true);
-      }, 500);
+        createParticles(x + distance*Math.cos(angle), y + distance*Math.sin(angle), 5, true); // kurang partikel secondary
+      }, 400);
     }
 
-    setTimeout(()=> p.remove(),1200);
+    setTimeout(()=> p.remove(), 1000);
   }
 }
 
@@ -131,23 +133,26 @@ function createFirework() {
 
   setTimeout(() => {
     const x = fw.offsetLeft;
-    const y = fw.offsetTop - 500;
-
-    createParticles(x, y, 30);
+    const y = fw.offsetTop - 350; // jarak kurang untuk lebih smooth
+    createParticles(x, y, 20); // kurang partikel utama
     fw.remove();
-  }, 900);
+  }, 700);
 }
 
+let fireworkInterval;
+
 btn.addEventListener('click', ()=>{
-  // Tambah background Jalur Gemilang dengan overlay gelap & fade-in
-  card.style.opacity = 0; // fade out sekejap
+  // fade-in background gelap Jalur Gemilang
+  card.style.opacity = 0;
   setTimeout(()=>{
-    card.style.backgroundImage = "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://upload.wikimedia.org/wikipedia/commons/6/66/Flag_of_Malaysia.svg')";
-    card.style.opacity = 1; // fade in
+    
+    card.style.opacity = 1;
   }, 300);
 
-  // Fireworks berulang tanpa henti
-  setInterval(createFirework, 400);
+  // Jika interval sudah wujud, jangan buat interval baru
+  if(!fireworkInterval){
+    fireworkInterval = setInterval(createFirework, 500); // interval lebih longgar
+  }
 });
 </script>
 </body>
